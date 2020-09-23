@@ -1,0 +1,36 @@
+version: '3.3'
+services: 
+    
+    webapp:
+        build:
+            context: ./projectname
+        command: python3 manage.py runserver 0.0.0.0:8000
+    
+    nginx:
+        build:
+            context: ./nginx
+        restart: unless-stopped
+        volumes:
+            - .nginx/:/etc/nginx/conf.d
+        ports:
+            - "80:80"
+            - "443:443"
+    
+    certbot:
+        image: certbot/certbot
+    
+    celery-worker:
+        build:
+            context: ./projectname
+        command: celery -A projectname worker -l INFO
+    
+    celery-beat:
+        build:
+            context: ./projectname
+        command: celery -A projectname beat -l INFO
+    
+    celery-flower:
+        build:
+            context: ./projectname
+        command: flower -A projectname --port=5555
+
