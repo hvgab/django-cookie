@@ -11,26 +11,36 @@ services:
             context: ./nginx
         restart: unless-stopped
         volumes:
-            - .nginx/:/etc/nginx/conf.d
+            - ./nginx/:/etc/nginx/conf.d/
+            - ./certbot/www:/var/www/certbot/:ro
+            - ./certbot/conf/:/etc/nginx/ssl/:ro
         ports:
             - "80:80"
             - "443:443"
     
-    certbot:
-        image: certbot/certbot
+    # certbot:
+    #     image: certbot/certbot
+    #     volumes:
+    #       - ./certbot/www/:/var/www/certbot/:rw
+    #       - ./certbot/conf/:/etc/letsencrypt/:rw
+
     
+    redis:
+        image: redis
     celery-worker:
         build:
             context: ./projectname
         command: celery -A projectname worker -l INFO
+        depends_on:
+            - redis
     
     celery-beat:
         build:
             context: ./projectname
         command: celery -A projectname beat -l INFO
     
-    celery-flower:
-        build:
-            context: ./projectname
-        command: flower -A projectname --port=5555
+    # celery-flower:
+    #     build:
+    #         context: ./projectname
+    #     command: flower -A projectname --port=5555
 

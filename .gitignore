@@ -127,3 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+certbot/conf/accounts/acme-staging-v02.api.letsencrypt.org/directory/0a4d19dcf82572c7d734951b5f4d1067/private_key.json
